@@ -59,16 +59,19 @@ void computeMeasurement(std::vector<int64>& result, double& min, double& max, do
 
 void doMeasurement(int size, int iteration, bool useGpu)
 {
-    std::vector<int64> result;
+    std::vector<int64> result0, result1;
     for(auto i = 0;i < iteration;i++)
     {
         int64 duration0, duration1;
         processMatrix(size, useGpu, duration0, duration1);
-        result.push_back(duration1);
+        result0.push_back(duration0);
+        result1.push_back(duration1);
     }
     double min, max, average, median, initial;
-    computeMeasurement(result, min, max, average, median, initial);
-    std::cout << size << '\t' << median << std::endl;
+    computeMeasurement(result0, min, max, average, median, initial);
+    std::cout << size << '\t' << median << '\t';
+    computeMeasurement(result1, min, max, average, median, initial);
+    std::cout << median << std::endl;
 }
 
 int main(int argc, char**argv)
