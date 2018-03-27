@@ -5,7 +5,7 @@ set(TARGET_NAME oclMatMul)
 project(${TARGET_NAME})
 
 add_executable(matMulSimple simpleMatmul.cpp)
-
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-psabi")
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 target_link_libraries(matMulSimple ${OpenCV_LIBS})
