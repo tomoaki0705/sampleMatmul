@@ -19,8 +19,8 @@ void processMatrix(int size, bool useGpu, int64& duration0, int64& duration1)
         Mat mat2(size, size, CV_32FC1);
         UMat umat1, umat2;
         RNG rng(initialSeed);
-        rng.fill(mat1, RNG::NORMAL, CV_32FC1, 10.0, 5.0);
-        rng.fill(mat2, RNG::NORMAL, CV_32FC1, 10.0, 5.0);
+        rng.fill(mat1, RNG::NORMAL, 10.0, 5.0);
+        rng.fill(mat2, RNG::NORMAL, 10.0, 5.0);
         int64 start0 = getTickCount();
         mat1.copyTo(umat1);
         mat2.copyTo(umat2);
@@ -36,8 +36,8 @@ void processMatrix(int size, bool useGpu, int64& duration0, int64& duration1)
         Mat mat1(size, size, CV_32FC1);
         Mat mat2(size, size, CV_32FC1);
         RNG rng(initialSeed);
-        rng.fill(mat1, RNG::NORMAL, CV_32FC1, 10.0, 5.0);
-        rng.fill(mat2, RNG::NORMAL, CV_32FC1, 10.0, 5.0);
+        rng.fill(mat1, RNG::NORMAL, 10.0, 5.0);
+        rng.fill(mat2, RNG::NORMAL, 10.0, 5.0);
         int64 start = getTickCount();
         Mat result = mat1 * mat2;
         int64 stop = getTickCount();
@@ -49,7 +49,7 @@ void processMatrix(int size, bool useGpu, int64& duration0, int64& duration1)
 void computeMeasurement(std::vector<int64>& result, double& min, double& max, double& average, double& median, double& initial)
 {
     int64 stub;
-    initial = result[0]/cv::getTickCount();
+    initial = (double)result[0]/cv::getTickCount();
     stub = (int64)*std::min_element(result.begin(), result.end());min = stub/cv::getTickFrequency();
     stub = (int64)*std::max_element(result.begin(), result.end());max = stub/cv::getTickFrequency();
     average = (double)(std::accumulate(result.begin(), result.end(), (int64)0))/result.size()/cv::getTickFrequency();
