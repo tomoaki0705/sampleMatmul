@@ -3,11 +3,16 @@
 #include <numeric>
 #include <opencv2/opencv.hpp>
 
+#define KEY_HELP  "help"
+#define KEY_INPUT "@input"
+#define KEY_SIZE  "size"
+#define KEY_ITERATION "iteration"
+#define VALUE_GPU "gpu"
 cv::String keys = 
-    "{size s|1024|max size of matrix}"
-    "{help h|false|help message}"
-    "{@input||\"gpu\" or other}"
-    "{iteration n|10|number of iteration}";
+    "{" KEY_SIZE      " s|1024 |max size of matrix}"
+    "{" KEY_HELP      " h|false|help message}"
+    "{" KEY_INPUT       "|"   "|\"" VALUE_GPU "\" or other}"
+    "{" KEY_ITERATION " n|10   |number of iteration}";
 const unsigned int initialSeed = 0x7777777;
 
 void processMatrix(int size, bool useGpu, int64& duration0, int64& duration1)
@@ -77,15 +82,15 @@ void doMeasurement(int size, int iteration, bool useGpu)
 int main(int argc, char**argv)
 {
     cv::CommandLineParser parser(argc, argv, keys);
-    if(parser.get<bool>("help"))
+    if(parser.get<bool>(KEY_HELP))
     {
         parser.printMessage();
         return 0;
     }
     int size = 4;
-    for( ;size <= parser.get<int>("size");size *= 2)
+    for( ;size <= parser.get<int>(KEY_SIZE);size *= 2)
     {
-        doMeasurement(size, parser.get<int>("iteration"), parser.get<cv::String>("@input").compare("gpu") == 0);
+        doMeasurement(size, parser.get<int>(KEY_ITERATION), parser.get<cv::String>(KEY_INPUT).compare(VALUE_GPU) == 0);
     }
 
     return 0;
