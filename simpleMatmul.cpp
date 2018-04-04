@@ -2,6 +2,7 @@
 #include <vector>
 #include <numeric>
 #include <opencv2/opencv.hpp>
+#include <opencv2/core/ocl.hpp>
 
 #define KEY_HELP  "help"
 #define KEY_INPUT "@input"
@@ -18,37 +19,22 @@ const unsigned int initialSeed = 0x7777777;
 void processMatrix(int size, bool useGpu, int64& duration0, int64& duration1)
 {
     using namespace cv;
-    if(useGpu)
-    {
-        Mat mat1(size, size, CV_32FC1);
-        Mat mat2(size, size, CV_32FC1);
-        UMat umat1, umat2;
-        RNG rng(initialSeed);
-        rng.fill(mat1, RNG::NORMAL, 10.0, 5.0);
-        rng.fill(mat2, RNG::NORMAL, 10.0, 5.0);
-        int64 start0 = getTickCount();
-        mat1.copyTo(umat1);
-        mat2.copyTo(umat2);
-        int64 start = getTickCount();
-        UMat result;
-        gemm(umat1, umat2, 1, noArray(), 0, result);
-        int64 stop = getTickCount();
-        duration0 = start - start0;
-        duration1 = stop - start;
-    }
-    else
-    {
-        Mat mat1(size, size, CV_32FC1);
-        Mat mat2(size, size, CV_32FC1);
-        RNG rng(initialSeed);
-        rng.fill(mat1, RNG::NORMAL, 10.0, 5.0);
-        rng.fill(mat2, RNG::NORMAL, 10.0, 5.0);
-        int64 start = getTickCount();
-        Mat result = mat1 * mat2;
-        int64 stop = getTickCount();
-        duration0 = 0;
-        duration1 = stop - start;
-    }
+    cv::ocl::setUseOpenCL(useGpu);
+    Mat mat1(size, size, CV_32FC1);
+    Mat mat2(size, size, CV_32FC1);
+    UMat umat1, umat2;
+    RNG rng(initialSeed);
+    rng.fill(mat1, RNG::NORMAL, 10.0, 5.0);
+    rng.fill(mat2, RNG::NORMAL, 10.0, 5.0);
+    int64 start0 = getTickCount();
+    mat1.copyTo(umat1);
+    mat2.copyTo(umat2);
+    int64 start = getTickCount();
+    UMat result;
+    gemm(umat1, umat2, 1, noArray(), 0, result);
+    int64 stop = getTickCount();
+    duration0 = start - start0;
+    duration1 = stop - start;
 }
 
 void computeMeasurement(std::vector<int64>& result, double& min, double& max, double& average, double& median, double& initial)
